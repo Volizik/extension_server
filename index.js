@@ -11,4 +11,4 @@ app.use(async ctx => {
     ctx.body = 'Hello World';
 });
 
-app.listen(3000, () => {console.log('Server is running!')});
+app.listen(process.env.PORT || 5000, () => {console.log('Server is running!')});
