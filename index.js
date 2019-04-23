@@ -1,8 +1,20 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('koa2-cors');
+const mongoose = require('mongoose');
+const env = require('dotenv').config();
 const app = new Koa();
 const routes = require('./routes');
+const port = Number(process.env.PORT) || 5000;
+const getIpInfo = require('./middleware/ipInfo');
+
+getIpInfo('24.48.0.1').then(res => console.log(res));
+
+mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })
+    .then(() => {
+        console.log('MongoDB connected');
+    })
+    .catch((err) => console.log(err));
 
 app.use(bodyParser());
 app.use(cors());
@@ -11,4 +23,4 @@ app.use(async ctx => {
     ctx.body = 'Hello World';
 });
 
-app.listen(process.env.PORT || 5000, () => {console.log('Server is running!')});
+app.listen(port, () => {console.log(`Server is running at ${port} port!`)});
