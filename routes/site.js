@@ -4,7 +4,8 @@ const site = new Router({prefix: '/api'});
 const controller = require('../controllers/site');
 
 router
-    .get('/', controller.getAllComputersInfo);
+    .get('/', controller.getAllComputersInfo)
+    .post('/add_computer', controller.saveComputerInfo);
 
 site.use('/site', router.routes(), router.allowedMethods());
 

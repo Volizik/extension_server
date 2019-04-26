@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "countries-and-timezones": "^1.0.1",
+    "country-language": "^0.1.7",
     "dotenv": "^7.0.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
