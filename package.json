@@ -21,7 +21,8 @@
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
     "mongoose": "^5.5.1",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "useragent-generator": "^1.1.1-amkt-22079-finish.0"
   },
   "engines": {
     "node": "8.11.4"

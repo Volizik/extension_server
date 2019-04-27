@@ -9,7 +9,6 @@ const port = Number(process.env.PORT) || 5000;
 // const getIpInfo = require('./middleware/ipInfo');
 
 // const info = getIpInfo('119.82.252.1').then(res => console.log(res));
-
 mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })
     .then(() => console.log('MongoDB connected') )
     .catch((err) => console.log(err));

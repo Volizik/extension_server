@@ -3,6 +3,7 @@ const countryLang = require('country-language');
 const countryTimezone = require('countries-and-timezones');
 
 module.exports = async function getIpInfo(ip) {
+    if (ip.length === 0) return;
     try {
         return await fetch(`http://ip-api.com/json/${ip}`)
             .then(res => res.json())
