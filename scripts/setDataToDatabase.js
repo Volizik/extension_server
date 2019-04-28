@@ -8,7 +8,6 @@ const LanguagesModel = require('../models/Languages');
 const BrowserModel = require('../models/Browser');
 const OSModel = require('../models/OS');
 const ScreenModel = require('../models/Screen');
-const ComputerInfoSelectionModel = require('../models/ComputerInfoSelection');
 
 function run() {
     mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })

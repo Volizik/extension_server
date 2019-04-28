@@ -40,57 +40,25 @@ module.exports.getAllComputersInfo = async ctx => {
 };
 
 module.exports.saveComputerInfo = async ctx => {
+    let res = {};
+    let useragentData = {};
     const {
-        screen,
-        hardwareConcurrency,
-        memory,
-        webgl,
-        languages,
-        browser,
-        os,
         proxy_protocol,
         proxy_address,
         proxy_port,
         proxy_login,
         proxy_password,
         ...other } = ctx.request.body;
-    let res = {};
 
-    const { timezone } = await ipInfo(proxy_address);
-
-    const screenPromise = ScreenModel.findById(screen, (err, response) => {
-        res.screen = response;
-    });
-    const hardwareConcurrencyPromise = HardwareConcurrencyModel.findById(hardwareConcurrency, (err, response) => {
-        res.hardwareConcurrency = response;
-    });
-    const memoryPromise = MemoryModel.findById(memory, (err, response) => {
-        res.memory = response;
-    });
-    const webglPromise = WebGLModel.findById(webgl, (err, response) => {
-        res.webgl = response;
-    });
-    const languagesPromise = LanguagesModel.find({'_id': {$in: languages}}, (err, response) => {
-        res.languages = response;
-    });
-    const browserPromise = BrowserModel.findById(browser, (err, response) => {
-        res.browser = response;
-    });
-    const osPromise = OSModel.findById(os, (err, response) => {
-        res.os = response;
+    const ipInfoPromise = ipInfo(proxy_address, ({timezone}) => res.timezone = timezone);
+    const osPromise = OSModel.findById(other.os, (err, data) => useragentData.os = data.release);
+    const browserPromise = BrowserModel.findById(other.browser, (err, data) => {
+        useragentData.browser = data.name;
+        useragentData.version = data.version;
     });
 
-    await Promise.all([
-        screenPromise,
-        hardwareConcurrencyPromise,
-        memoryPromise,
-        webglPromise,
-        languagesPromise,
-        browserPromise,
-        osPromise
-    ]);
+    await Promise.all([osPromise, browserPromise, ipInfoPromise]);
 
-    res.timezone = timezone;
     res.proxy = {
         protocol: proxy_protocol,
         ip: proxy_address,
@@ -98,8 +66,26 @@ module.exports.saveComputerInfo = async ctx => {
         login: proxy_login,
         password: proxy_password
     };
-    res.useragent = useragent.generate(res.browser.name, res.browser.version, res.os.release);
+    res.useragent = useragent.generate(useragentData.browser, useragentData.version, useragentData.os);
     res = Object.assign(res, other);
+
     ComputerInfoModel.create(res);
-    ctx.body = res;
+    ctx.body = {status: 'OK'};
+};
+
+module.exports.getSavedComputers = async ctx => {
+    ctx.body = await ComputerInfoModel.find({})
+        .populate('screen')
+        .populate('hardwareConcurrency')
+        .populate('webgl')
+        .populate('languages')
+        .populate('browser')
+        .populate('memory')
+        .populate('os');
+};
+
+module.exports.removeComputer = async ctx => {
+    const { id } = ctx.request.body;
+
+    ctx.body = await ComputerInfoModel.findByIdAndRemove(id);
 };
