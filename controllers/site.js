@@ -5,10 +5,13 @@ const LanguagesModel = require('../models/Languages');
 const BrowserModel = require('../models/Browser');
 const OSModel = require('../models/OS');
 const ScreenModel = require('../models/Screen');
+const DoNotTrackModel = require('../models/DoNotTrack');
 const ComputerInfoModel = require('../models/ComputerInfo');
+
 
 const ipInfo = require('../middleware/ipInfo');
 const useragent = require('../middleware/useragent');
+const saltGenerator = require('../middleware/saltGenerator');
 
 module.exports.getAllComputersInfo = async ctx => {
     let response = {};
@@ -34,13 +37,17 @@ module.exports.getAllComputersInfo = async ctx => {
     const screen = ScreenModel.find({}, (err, res) => {
         response.screen = res;
     });
+    const doNotTrack = DoNotTrackModel.find({}, (err, res) => {
+        response.doNotTrack = res;
+    });
 
-    await Promise.all([browsers, webGL, memory, hardwareConcurrency, os, languages, screen])
+    await Promise.all([browsers, webGL, memory, hardwareConcurrency, os, languages, screen, doNotTrack])
         .then(() => ctx.body = response);
 };
 
 module.exports.saveComputerInfo = async ctx => {
     let res = {};
+    res.canvas = {};
     let useragentData = {};
     const {
         proxy_protocol,
@@ -50,7 +57,10 @@ module.exports.saveComputerInfo = async ctx => {
         proxy_password,
         ...other } = ctx.request.body;
 
-    const ipInfoPromise = ipInfo(proxy_address, ({timezone}) => res.timezone = timezone);
+    const ipInfoPromise = ipInfo(proxy_address, ({timezone, language}) => {
+        res.timezone = timezone;
+        res.language = language;
+    });
     const osPromise = OSModel.findById(other.os, (err, data) => useragentData.os = data.release);
     const browserPromise = BrowserModel.findById(other.browser, (err, data) => {
         useragentData.browser = data.name;
@@ -67,6 +77,8 @@ module.exports.saveComputerInfo = async ctx => {
         password: proxy_password
     };
     res.useragent = useragent.generate(useragentData.browser, useragentData.version, useragentData.os);
+    res.webglSalt = saltGenerator.webgl();
+    res.canvas.salt = saltGenerator.canvas();
     res = Object.assign(res, other);
 
     ComputerInfoModel.create(res);
@@ -81,6 +93,7 @@ module.exports.getSavedComputers = async ctx => {
         .populate('languages')
         .populate('browser')
         .populate('memory')
+        .populate('doNotTrack')
         .populate('os');
 };
 

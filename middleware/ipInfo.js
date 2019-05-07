@@ -18,6 +18,7 @@ module.exports = async function getIpInfo(ip, callback) {
                         if (callback) {
                             callback(res);
                         }
+                        console.log(res)
                         return res;
                     }
                 });

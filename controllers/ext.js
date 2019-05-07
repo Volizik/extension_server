@@ -1,3 +1,5 @@
+const ComputerInfoModel = require('../models/ComputerInfo');
+
 const computers = [
     {
         name: 'Computer 1',
@@ -94,5 +96,13 @@ const computers = [
 ];
 
 module.exports.getAllComputers = async (ctx) => {
-    ctx.body = computers
+    ctx.body = await ComputerInfoModel.find({})
+        .populate('screen')
+        .populate('hardwareConcurrency')
+        .populate('webgl')
+        .populate('languages')
+        .populate('browser')
+        .populate('memory')
+        .populate('doNotTrack')
+        .populate('os');
 };

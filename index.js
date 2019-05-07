@@ -12,7 +12,9 @@ const Router = require('koa-router');
 const router = new Router();
 
 mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })
-    .then(() => console.log('MongoDB connected') )
+    .then(() => {
+        console.log('MongoDB connected')
+    })
     .catch((err) => console.log(err));
 
 app.use(bodyParser());

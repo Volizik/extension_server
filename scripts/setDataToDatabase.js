@@ -8,6 +8,7 @@ const LanguagesModel = require('../models/Languages');
 const BrowserModel = require('../models/Browser');
 const OSModel = require('../models/OS');
 const ScreenModel = require('../models/Screen');
+const dntModel = require('../models/DoNotTrack');
 
 function run() {
     mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })
@@ -20,6 +21,7 @@ function run() {
             language();
             os();
             screen();
+            doNotTrack();
         })
         .catch((err) => console.log(err));
 }
@@ -221,6 +223,12 @@ function screen() {
         height: 1050,
         label: '1680x1050'
     });
+}
+
+function doNotTrack() {
+    dntModel.create({value: '1'});
+    dntModel.create({value: '0'});
+    dntModel.create({value: 'unspecified'});
 }
 
 module.exports.run = run;

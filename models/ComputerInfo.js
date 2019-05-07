@@ -7,6 +7,7 @@ const schema = new Schema({
     hardwareConcurrency: {type: Schema.Types.ObjectId, ref: 'HardwareConcurrency' },
     memory: {type: Schema.Types.ObjectId, ref: 'Memory' },
     webgl: {type: Schema.Types.ObjectId, ref: 'WebGL' },
+    language: ['string'],
     languages: [{type: Schema.Types.ObjectId, ref: 'Languages' }],
     browser: {type: Schema.Types.ObjectId, ref: 'Browser' },
     os: {type: Schema.Types.ObjectId, ref: 'OS' },
@@ -23,7 +24,12 @@ const schema = new Schema({
         offsetStr: 'string',
         utcOffset: 'number'
     },
-    useragent: 'string'
+    useragent: 'string',
+    canvas: {
+        salt: 'string'
+    },
+    doNotTrack: {type: Schema.Types.ObjectId, ref: 'DoNotTrack'},
+    webglSalt: 'number',
 });
 
 module.exports = model('ComputerInfo', schema);
