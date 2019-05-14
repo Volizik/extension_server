@@ -19,9 +19,8 @@ const schema = new Schema({
         protocol: 'string'
     },
     timezone: {
-        countries: ['string'],
         name: 'string',
-        offsetStr: 'string',
+        date: 'string',
         utcOffset: 'number'
     },
     useragent: 'string',

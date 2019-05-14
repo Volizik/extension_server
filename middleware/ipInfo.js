@@ -14,11 +14,18 @@ module.exports = async function getIpInfo(ip, callback) {
                         return {status: 'error', error: err};
                     } else {
                         res.language = country.languages.map(lang => lang['iso639_1']);
-                        res.timezone = countryTimezone.getTimezonesForCountry(res['countryCode'])[0];
+                        // res.timezone = countryTimezone.getTimezonesForCountry(res['countryCode']);
+                        console.log(countryTimezone.getTimezonesForCountry(res['countryCode']))
+                        process.env.TZ = res.timezone;
+                        const timezone = res.timezone;
+                        res.timezone = {};
+                        res.timezone.name = timezone
+                        res.timezone.date = new Date().toString();
+                        res.timezone.utcOffset = new Date().getTimezoneOffset();
+                        console.log('res',res);
                         if (callback) {
                             callback(res);
                         }
-                        console.log(res)
                         return res;
                     }
                 });

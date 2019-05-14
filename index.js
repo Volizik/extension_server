@@ -10,6 +10,7 @@ const routes = require('./routes');
 const port = Number(process.env.PORT) || 5000;
 const Router = require('koa-router');
 const router = new Router();
+const ipInfo = require('./middleware/ipInfo');
 
 mongoose.connect(`${process.env.DB_HOST}`, { useNewUrlParser: true })
     .then(() => {
